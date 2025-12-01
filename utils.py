@@ -168,8 +168,31 @@ def plot_flight_altitude_speed(
 
     return fig
 
+def MAE(y_true, y_pred):
+    """
+    Mean Absolute Error
+    """
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    return np.mean(np.abs(y_true - y_pred))
 
+def RMSE(y_true, y_pred):
+    """
+    Root Mean Square Error
+    """
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    return np.sqrt(np.mean((y_true - y_pred)**2))
 
+def MAPE(y_true, y_pred):
+    """
+    Mean Absolute Percentage Error (in %)
+    Avoids division-by-zero by adding a very small epsilon.
+    """
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    epsilon = 1e-9
+    return np.mean(np.abs((y_true - y_pred) / (y_true + epsilon))) * 100
 
 # --------------------------------
 # Main cleaning function
