@@ -168,6 +168,12 @@ def plot_flight_altitude_speed(
 
     return fig
 
+def compute_airspeed(df, wind_x, wind_y):
+    return np.sqrt(
+        (df["velocity_x"] - wind_x)**2 +
+        (df["velocity_y"] - wind_y)**2
+    )
+
 def MAE(y_true, y_pred):
     """
     Mean Absolute Error
