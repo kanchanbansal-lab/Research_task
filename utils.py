@@ -151,20 +151,19 @@ def plot_flight_altitude_speed(
         ),
 
         template="plotly_white",
-        legend=dict(x=1, y=1)
+        legend=dict(x=1.1, y=1)
     )
 
     fig.update_layout(
         legend=dict(
-            x=1.08,
+            x=1.1,
             y=1,
             bgcolor="rgba(255,255,255,0.7)"
         ),
         margin=dict(r=120)
     )
 
-    if show:
-        fig.show()
+
 
     return fig
 
