@@ -58,7 +58,7 @@ def plot_flight_altitude_speed(
         y=d["vz_from_alt"],
         mode="lines",
         line=dict(width=2, color="red"),
-        name="Vertical speed (m/s)",
+        name=" speed (m/s)",
         yaxis="y2",
         customdata=customdata,
         hovertemplate=(
@@ -144,7 +144,7 @@ def plot_flight_altitude_speed(
 
         # Right Y-axis
         yaxis2=dict(
-            title=dict(text="Vertical speed (m/s)", font=dict(color="red")),
+            title=dict(text=" speed (m/s)", font=dict(color="red")),
             tickfont=dict(color="red"),
             overlaying="y",
             side="right"
