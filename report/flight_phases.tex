@@ -1,0 +1,57 @@
+The flight phases for the DJI M100 are defined based on motion and altitude thresholds as follows:
+
+\subsection{Taxi Phase}
+The \textit{Taxi} phase corresponds to a low-motion state characterized by negligible horizontal and vertical movement, accompanied by minimal power consumption. This phase typically occurs during ground operations, such as taxiing on runways or moving between takeoff and landing positions. A flight segment is classified as \textit{Taxi} if and only if all of the following conditions are satisfied:
+\begin{equation}
+v < 0.3 \quad \land \quad \left| v_z \right| < 0.2 \quad \land \quad P_\text{real} < 50.0.    
+\end{equation}
+
+The logical conjunction ($\land$) ensures that all three conditions must hold simultaneously for classification.
+
+\subsection{Hover Phase}
+The \textit{Hover} phase denotes a state of stable, near-stationary flight in both horizontal and vertical dimensions. Unlike the \textit{Taxi} phase, power consumption may be significant due to the sustained lift required to maintain altitude. This phase is typical during aerial inspection, target tracking, or waiting maneuvers. A segment is classified as \textit{Hover} if and only if:
+\begin{equation}
+v < 0.3 \quad \land \quad \left| v_z \right| < 0.2.
+\end{equation}
+
+\subsection{Cruise Phase}
+The \textit{Cruise} phase represents steady, forward flight at a stable altitude, typical of long-range or efficient flight operations. This phase is characterized by minimal vertical motion and flight at a significant fraction of the maximum achievable altitude. A segment is classified as \textit{Cruise} if and only if:
+\begin{equation}
+\left| v_z \right| < 0.6 \quad \land \quad z > 0.8 \times \text{max}(z).    
+\end{equation}
+
+\subsection{Climb Phase}
+The \textit{Climb} phase is defined by a positive vertical velocity exceeding the cruise threshold, indicating active ascent. This phase is critical for assessing energy expenditure during altitude gain. A segment is classified as \textit{Climb} if and only if:
+\begin{equation}
+v_z > 0.6.    
+\end{equation}
+
+\subsection{Descent Phase}
+The \textit{Descent} phase corresponds to a controlled or uncontrolled downward trajectory, characterized by a vertical velocity below the negative cruise threshold. This phase is essential for analyzing landing procedures and energy recovery. A segment is classified as \textit{Descent} if and only if:
+\begin{equation}
+v_z < -0.6.    
+\end{equation}
+
+\subsection{Other Phase}
+The \textit{Other} phase serves as a default category for all data points that do not satisfy the conditions of the above five phases. This includes transitional states (e.g., from hover to climb, or during abrupt maneuvers), invalid or corrupted data, and anomalous flight behaviors. Formally, a segment belongs to the \textit{Other} phase if it fails to satisfy the conjunction of conditions defining any of the preceding phases.
+
+\subsection{Sample flight trajectory}
+Based on the previously defined criteria for different flight phases,  Figure~\ref{fig:phase_seg_01} presents a representative example demonstrating how these phases are identified in practice using real flight data. The figure shows the trajectory of flight~79 , where the x-axis represents time, the left y-axis indicates height, and the right y-axis shows velocity. The height profile is shown by the blue curve, while the vertical speed and horizontal speed are represented by the red and green curves, respectively. The background shading indicates classified flight phases, including taxi, climb, cruise, descent, hover, and other.
+
+At the beginning of the mission (0--20~s), the vehicle remains at ground level with near-zero vertical speed, corresponding to the taxi phase. Between approximately 20~s and 40~s, the height increases rapidly and the vertical speed becomes positive, indicating the climb phase. From about 40~s to 95~s, the vehicle maintains an approximately constant height of around 50~m, which corresponds to the cruise phase. During this interval, the vertical speed remains close to zero, while the horizontal speed is relatively high and exhibits noticeable oscillations, likely due to maneuvering or control adjustments. At around 95~s, the height begins to decrease and the vertical speed becomes negative, marking the start of the descent phase, which continues until the vehicle reaches ground level at approximately 130~s. Finally, from 130~s to 160~s, the vehicle remains on the ground with near-zero height and velocities, returning to the taxi phase. Overall, the figure demonstrates a complete mission profile and highlights the consistency between the kinematic variables and the identified flight phases. Figure \ref{fig:phase_seg_02} illustrates the temporal variation of wind speed and corresponding power consumption.
+
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/phases_plot.pdf}
+    \caption{Time series of drone altitude, vertical speed, and horizontal speed for flight 79, with segments colored by flight phase (as per legend).}
+    \label{fig:phase_seg_01}
+\end{figure*}
+\begin{figure*}
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/phases_power_plot.pdf}
+    \caption{Time series of wind speed, and power measured for flight 79, with segments colored by flight phase (as per legend in Figure \ref{fig:phase_seg_01}).}
+    \label{fig:phase_seg_02}
+\end{figure*}
+
+

@@ -1,0 +1,248 @@
+%% ICRAT 2024.tex
+%% V1.0
+%% 2024/01 
+%% created by Thinh Pham, modified from ATM2023.tex by Ramon Dalmau
+
+\documentclass[conference, letter]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+% *** GRAPHICS RELATED PACKAGES ***
+%
+\ifCLASSINFOpdf
+  \usepackage[pdftex]{graphicx}
+  % declare the path(s) where your graphic files are
+  %\graphicspath{}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+\else
+  % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
+  % will default to the driver specified in the system graphics.cfg if no
+  % driver is specified.
+  % \usepackage[dvips]{graphicx}
+  % declare the path(s) where your graphic files are
+  % \graphicspath{{../eps/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  % \DeclareGraphicsExtensions{.eps}
+\fi
+
+% *** PACKAGES ***
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage[left=1.29cm, right=1.29cm, top=1.9cm, bottom=4.29cm]{geometry}
+% \usepackage{caption}
+\usepackage{enumitem}
+\usepackage{anyfontsize}
+\usepackage{lipsum}
+\usepackage{hyperref}
+
+% \captionsetup[table]{format=plain,labelformat=simple,labelsep=period, textfont=sc}%
+\setlength{\columnsep}{7mm}
+
+% *** HEADER ***
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{Student Research Task 2025/26}
+\rhead{Chair of Air Transport and Logistics}
+\renewcommand{\headrulewidth}{0pt}
+
+% *** CHANGE FIGURE LABEL ***
+\makeatletter
+\renewcommand{\fnum@figure}{Figure \thefigure}
+\makeatother
+
+% *** TITLE ***
+\title{ {Energy Consumption Modeling for UAVs Based on Flight Data and Mission Parameters}
+\vspace{0.5cm}
+}
+
+% *** AUTHORS ***
+\author{\IEEEauthorblockN{Research Task Group 4, \textit{Masters in Air Transport and Logistics}}
+\IEEEauthorblockA{Chair of Air Transport and Logistics \\
+TU Dresden, Dresden, Germany \\}
+}
+
+\renewcommand\IEEEkeywordsname{Keywords}
+\IEEEaftertitletext{\vspace{-1\baselineskip}}
+
+% *** DOCUMENT ***
+\begin{document}
+
+\maketitle
+\thispagestyle{fancy}
+
+\noindent \begin{abstract}
+This study presents a comprehensive analysis of UAV energy consumption using a high-fidelity, publicly available dataset from $209$ autonomous flights of a DJI Matrice 100 quadcopter, collected over seven months under diverse operational and environmental conditions. The dataset enables robust empirical investigation of power dynamics across varying payloads, altitudes, and flight phases. Histogram analysis of vertical velocity, horizontal speed, and power consumption reveals distinct multimodal distributions, which inform the selection of phase-specific thresholds:
+$\pm0.6~\text{m/s}$ for vertical motion, $0.3~\text{m/s}$ for horizontal speed, and $50~\text{W}$ for power. These thresholds support a robust, threshold-based classification of flight phases—Taxi, Hover, Cruise, Climb, Descent, and Other—ensuring physically meaningful segmentation of UAV flight data.
+A physics-based, segment-wise power model is developed using actuator disk theory and phase-dependent efficiency estimates. The model demonstrates strong performance across climb, descent, and cruise phases, with MAPE below $12\%$ in cruise flight, validating its ability to capture key aerodynamic and propulsion dynamics under steady-state conditions.
+Complementing this, a Random Forest regression model is trained on $19$ flight-state features—including velocity, wind conditions, attitude, and flight mode indicators—achieving an
+$R^2$ score of $0.941$ and sub-$50~\text{W}$ MAE across all phases. The model exhibits superior predictive accuracy, reducing error by up to $50\%$ compared to the physics-based approach, and accurately captures transient power dynamics during complex maneuvers.
+However, a critical trade-off emerges: while the data-driven model excels in accuracy and temporal fidelity within its training domain, it exhibits unphysical extrapolation and limited interpretability. In contrast, the physics-based model, though less accurate in complex regimes, offers greater transparency and robustness to out-of-distribution conditions.
+
+\end{abstract}
+
+\vspace{0.3cm}
+
+\begin{IEEEkeywords}
+UAV energy consumption, Physics-based model, Data-driven modeling, Model comparison, Flight data analysis, Machine learning for UAVs
+\end{IEEEkeywords}
+% \section*{Abbreviations and Symbols}
+% \input{abbreviations}
+
+\section{Introduction}
+\input{introduction}
+
+\section{Data acquisation and analysis}
+\label{data_analysis}
+\input{data_aquisation}
+% \section{Data analysis}
+% \input{analysis}
+
+\section{Definition of Flight Phases}
+\label{flight_phases}
+\input{flight_phases}
+
+\section{Physical model}
+\label{Physic_model}
+\input{Physic_model}
+
+\section{Random Forest Model for Power Prediction}
+\label{data_driven}
+\input{data_driven}
+
+\section{Model validation and comparison}
+\label{task_04}
+\input{task_04}
+
+\section{Application to Energy-aware mission planning}
+\label{task_05}
+\input{task_05}
+
+\section{Summary and outlook}
+\input{conclusion}
+
+\section*{Repository}
+The source code, presentation, and report for this project are publicly available on GitHub. You can access the repository at:
+\href{https://github.com/kanchanbansal-lab/Research_task}{https://github.com/kanchanbansal-lab/Research\_task}
+The repository includes implementation details, model configurations, and data processing scripts.
+
+\begin{thebibliography}{00}
+
+\bibitem{muli2022}
+Muli, Charles, Sanghyun Park, and Ming Liu. 2022.
+“A Comparative Study on Energy Consumption Models for Drones.”
+In \textit{Internet of Things (GIoTS 2022)},
+edited by A. González-Vidal et al.,
+Lecture Notes in Computer Science 13533.
+Cham: Springer.
+
+\bibitem{ren2025}
+Ren, Guanting, Babar Shahzaad, Balsam Alkouz, Abdallah Lakhdari, and Athman Bouguettaya. 2026.
+“Energy-Predictive Planning for Optimizing Drone Service Delivery.”
+\textit{Expert Systems with Applications} 297 (Part A): 129251.
+https://doi.org/10.1016/j.eswa.2025.129251.
+
+\bibitem{zhang2021}
+Zhang, Juan, James F. Campbell, Donald C. Sweeney II, and Andrea C. Hupman. 2021.
+“Energy Consumption Models for Delivery Drones: A Comparison and Assessment.”
+\textit{Transportation Research Part D: Transport and Environment} 90: 102668.
+https://doi.org/10.1016/j.trd.2020.102668.
+
+\bibitem{dorling2017}
+Dorling, Kevin, Jörn Heinrichs, Geoffrey G. Messier, and Sebastian Magierowski. 2017.
+“Vehicle Routing Problems for Drone Delivery.”
+\textit{IEEE Transactions on Systems, Man, and Cybernetics: Systems} 47 (1): 70–85.
+
+\bibitem{rodrigues2021}
+Rodrigues, Thiago A., Jay Patrikar, Natalia L. Oliveira, H. Scott Matthews, Sebastian Scherer, and Constantine Samaras. 2021.
+“In-Flight Positional and Energy Use Dataset of a DJI Matrice 100 Quadcopter for Small Package Delivery.”
+\textit{Scientific Data} 8: 154.
+https://doi.org/10.1038/s41597-021-00930-x.
+
+\bibitem{rodrigues2022}
+Rodrigues, Thiago A., Jay Patrikar, Natalia L. Oliveira, H. Scott Matthews, Sebastian Scherer, and Constantine Samaras. 2022.
+“Drone Flight Data Reveal Energy and Greenhouse Gas Emissions Savings for Very Small Package Delivery.”
+\textit{Patterns} 3 (8): 100569.
+https://doi.org/10.1016/j.patter.2022.100569.
+
+\bibitem{conte2022}
+Conte, Carmelo, Giovanni Rufino, Gianluca de Alteriis, Vincenzo Bottino, and Domenico Accardo. 2022.
+“A Data-Driven Learning Method for Online Prediction of Drone Battery Discharge.”
+\textit{Aerospace Science and Technology} 130: 107921.
+https://doi.org/10.1016/j.ast.2022.107921.
+
+\bibitem{bruehl2021}
+Brühl, Robert, Hartmut Fricke, and Michael Schultz. 2021.
+“Air Taxi Flight Performance Modeling and Application.”
+
+\bibitem{gora2022}
+Gora, Kamil, Piotr Smyczynski, Mateusz Kujawinski, and Grzegorz Granosik. 2022.
+“Machine Learning in Creating Energy Consumption Model for UAV.”
+\textit{Energies} 15 (18): 6810.
+https://doi.org/10.3390/en15186810.
+
+\bibitem{lieshman2006}
+Leishman, J. Gordon. 2006.
+\textit{Principles of Helicopter Aerodynamics}.
+Cambridge: Cambridge University Press.
+
+\bibitem{johnson1980}
+Johnson, Wayne. 1980.
+\textit{Helicopter Theory}.
+Princeton, NJ: Princeton University Press.
+
+\bibitem{hwang2018}
+Hwang, Seungmin, et al. 2018.
+“Energy Consumption Modeling for Multirotor UAVs.”
+\textit{Journal of Aircraft}.
+
+\bibitem{gong2022}
+Gong, Ankang, et al. 2022.
+“Modeling Power Consumption of Multirotor UAVs.”
+\textit{Aerospace Science and Technology}.
+
+\bibitem{hammer2024}
+Hammer, Martin, et al. 2024.
+“Aerodynamic Drag Characteristics of Multirotor UAVs.”
+\textit{Aerospace}.
+
+\bibitem{jacewicz2022}
+Jacewicz, Mateusz, et al. 2022.
+“Energy Consumption Analysis of Quadrotor UAVs.”
+\textit{Energies}.
+
+\bibitem{patterson2018}
+Patterson, Michael, K. Antcliff, and L. Kohlman. 2018.
+“A Proposed Approach to Studying Urban Air Mobility Missions Including an Initial Exploration of Mission Requirements.”
+In \textit{Proceedings of the AHS International 74th Annual Forum \& Technology Display}.
+
+\bibitem{dji2016}
+DJI. 2016.
+\textit{DJI Matrice 100 User Manual}.
+Shenzhen: DJI.
+
+\bibitem{scikit}
+Pedregosa, Fabian, Gaël Varoquaux, Alexandre Gramfort, Vincent Michel, Bertrand Thirion, Olivier Grisel, Mathieu Blondel, et al. 2011.
+“Scikit-Learn: Machine Learning in Python.”
+\textit{Journal of Machine Learning Research} 12: 2825–2830.
+
+\bibitem{pandas}
+McKinney, Wes. 2010.
+“Data Structures for Statistical Computing in Python.”
+In \textit{Proceedings of the 9th Python in Science Conference}, 51–56.
+
+\bibitem{fatima2022}
+Fatima, Syeda Kounpal, Manzar Abbas, Imran Mir, Faiza Gul, Suleman Mir, Nasir Saeed, Abdullah Alhumaidi Alotaibi, Turke Althobaiti, and Laith Abualigah. 2022.
+“Data Driven Model Estimation for Aerial Vehicles: A Perspective Analysis.”
+\textit{Processes} 10 (7): 1236.
+https://doi.org/10.3390/pr10071236.
+
+
+\end{thebibliography}
+\vspace{12pt}
+
+\end{document}

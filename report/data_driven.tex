@@ -1,0 +1,33 @@
+Random Forest is an ensemble learning method that constructs multiple decision trees during training and outputs the average prediction (for regression) to improve accuracy and reduce overfitting \cite{gora2022}. Each tree is trained on a random subset of the data (bootstrap sampling) and a random subset of features at each split, enhancing model robustness and generalization.
+
+In this study, a Random Forest Regressor from \texttt{scikit-learn} \cite{scikit} was used to predict UAV power consumption (\texttt{power\_w}) based on 19 features: \texttt{wind\_speed}, \texttt{wind\_angle}, \texttt{roll}, \texttt{pitch}, \texttt{yaw}, \texttt{velocity\_x}, \texttt{velocity\_y}, \texttt{velocity\_z}, \texttt{vz\_from\_alt}, \texttt{angular\_x}, \texttt{angular\_y}, \texttt{angular\_z}, \texttt{linear\_acceleration\_x}, \texttt{linear\_acceleration\_y}, \texttt{linear\_acceleration\_z}, and binary flight mode indicators (\texttt{is\_cruise}, \texttt{is\_climb}, \texttt{is\_descent}, \texttt{is\_hover}). 
+To extract the corresponding Euler angles, roll ($\phi$), pitch ($\theta$), and yaw ($\psi$), the transformation from quaternion to Euler angles is derived from the relationship between rotation matrices and quaternions, and is given by the following equations:
+
+\begin{align}
+\phi &= \operatorname{atan2}(2(w x + y z), 1 - 2(x^2 + y^2)), \\
+\theta &= \operatorname{arcsin}(2(w y - z x)), \\
+\psi &= \operatorname{atan2}(2(w z + x y), 1 - 2(y^2 + z^2)).
+\end{align}
+
+To ensure numerical stability, the input quaternion was normalized prior to conversion. In cases where the pitch angle approached $\pm \pi/2$, the $\operatorname{arcsin}$ function was clamped to $\pm \pi/2$ to prevent gimbal lock artifacts. The resulting Euler angles were computed for each time step in \texttt{pandas} \cite{pandas}.
+
+The model was trained on a 80–20 train-test split with hyperparameters tuned via cross-validation. It achieved an R$^2$ score of 0.941, demonstrating strong predictive performance. Feature importance analysis identified \texttt{velocity\_z}, \texttt{wind\_speed}, and flight mode variables as the most influential predictors, consistent with physical expectations of power demand during vertical motion and environmental interaction.
+
+\subsection{Model Evaluation}
+
+Model performance is again quantified using MAE, RMSE, and MAPE, as summarized in Table~\ref{tab:performance_no_transition}.
+
+\begin{table}[hp]
+\centering
+\caption{Model performance by flight mode (Random Forest).}
+\label{tab:performance_no_transition}
+\begin{tabular}{lrrrr}
+\textbf{Segment} & \textbf{MAE (W)} & \textbf{RMSE (W)} & \textbf{MAPE (\%)} \\
+Hover      & 46.69 & 74.98 & 20.60 \\
+Climb      & 33.39 & 46.40 & 6.17 \\
+Descent    & 33.37 & 46.92 & 7.21 \\
+Cruise     & 37.14 & 49.21 & 7.46 \\
+\end{tabular}
+\end{table}
+
+The Random Forest model demonstrates strong predictive accuracy across all flight modes. Notably, it achieves significantly lower errors compared to the physics-based model in hover, with MAPE reduced from 84.86\% to 20.60\%, indicating its ability to capture complex, non-linear relationships in induced power and system inefficiencies. The model maintains low MAPE values (below 8\%) in climb, descent, and cruise, reflecting its robustness in steady-state flight regimes. 

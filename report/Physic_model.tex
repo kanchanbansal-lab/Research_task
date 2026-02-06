@@ -1,0 +1,97 @@
+In this section, we develop a simple analytical physics-based model that relates the electrical power consumption of a multirotor UAV to its mass, thrust generation, climb and descent rate, aerodynamic drag, and environmental wind conditions. The model follows a quasi-steady flight assumption, which is commonly adopted in UAV energy modeling \cite{lieshman2006, hwang2018}.
+
+\subsection{Hover Power}
+
+The DJI Matrice 100 is a quadrotor UAV equipped with four identical counter-rotating rotors, each modeled as an actuator disk with radius $ R = 0.165~\text{m} $. The total rotor disk area $A_{\text{tot}}$ is given by:
+\begin{equation}
+A_{\text{tot}} = N \pi R^2 = 4 \pi R^2,
+\end{equation}
+where $ N = 4 $ is the number of rotors.
+
+In hover flight, the induced velocity $ v_h $, the downward velocity of air through the rotor disk, is derived from momentum theory:
+\begin{equation}
+v_h = \sqrt{\frac{mg}{2 \rho A_{\text{tot}}}},
+\end{equation}
+where:
+\begin{itemize}
+    \item $ m = M_0 + \text{payload\_kg} $ is the total mass of the UAV (including empty mass $ M_0 = 3.68~\text{kg} $ and payload),
+    \item $ g = 9.81~\text{m/s}^2 $ is the gravitational acceleration,
+    \item $ \rho = 1.225~\text{kg/m}^3 $ is the air density at sea level.
+\end{itemize}
+
+The ideal mechanical power required to sustain hover, neglecting profile and parasitic losses, is:
+\begin{equation}
+P_{\text{hover}} = \frac{W^{3/2}}{\sqrt{2 \rho A_{\text{tot}}}},
+\end{equation}
+where $ W = mg $ is the weight of the UAV. This expression assumes ideal actuator disk theory and is used as a baseline for estimating power requirements in vertical flight \cite{lieshman2006, johnson1980, gong2022}.
+
+\subsection{Climb and descent Power}
+For vertical flight, the induced power is corrected using axial momentum theory
+\begin{equation}
+    P_\text{induced} = P_\text{hover} \cdot \left [  \frac{v_z}{v_h} + \frac{v_i}{v_h} \right ] ,
+\end{equation}
+where,
+\begin{equation}
+    \frac{v_i}{v_h} = - \left ( \frac{v_z}{2v_h} \right ) + \sqrt{ \left ( \frac{v_z}{2v_h} \right )^2 + 1 }.
+\end{equation}
+This gives
+\begin{equation}
+P_{\text{induced}} = P_\text{hover} \left [ \frac{v_z}{2v_h} +\sqrt{ \left ( \frac{v_z}{2v_h} \right )^2 + 1 } \right]    .
+\end{equation}
+where $v_z >0$ corresponds to climb and $v_z < 0$ to descent. This formulation captures the increased power demand during climb and reduced induced power during descent while avoiding non-physical negative power values \cite{lieshman2006, johnson1980}.
+
+\subsection{Cruise}
+The aerodynamic drag force is modeled as
+\begin{equation}
+P_{\text{drag}} = \frac{1}{2} \rho C_d S_{\text{ref}} v_{\text{air}}^3    
+\end{equation}
+Here, $v_{\text{air}}$ is relative velocity between drone and wind, $C_d$ is the drag coefficient and $S_{\text{ref}}$ is the reference area.
+
+Analysis of the onboard attitude quaternion data shows that the pitch angle of the UAV is strongly concentrated around $0$ degree, indicating predominantly near level flight conditions. Under near-level flight conditions, the aerodynamic drag characteristics of multirotor UAVs can be approximated using drag coefficients reported for zero or near-zero fuselage pitch angles. Following the experimental study \cite{hammer2024}, an effective drag coefficient of $C_d = 0.32$ is adopted.
+
+In the same study, the authors approximate the aerodynamic reference area for small multirotor UAVs with a total mass in the range of 3–4 kg using an effective frontal reference area \cite{hammer2024}. Accordingly, for the DJI Matrice 100 platform with a total mass of approximately 3.6 kg, the reference area is adopted as
+$S_{\text{ref}} = 0.05 ~\text{m}^2$.
+
+The total mechanical power during cruise is approximated as
+\begin{equation}
+P_{\text{cruise}} = P_{\text{hover}} + P_{\text{drag}}
+\end{equation}
+
+\subsection{Segment-Wise Efficiency Estimation}
+
+To better capture the dynamic nature of UAV propulsion losses across different flight regimes, a segment-wise efficiency estimation approach is adopted, replacing the assumption of a single constant efficiency. The electrical power drawn from the battery is related to the mechanical power output by:
+\begin{equation}
+P_{\text{battery}} = \frac{P_{\text{mech}}}{\eta},
+\end{equation}
+where $\eta$ denotes the effective system efficiency, representing the aggregate losses across the propulsion chain, including electric motors, electronic speed controllers, propellers, and electrical wiring. By estimating $\eta$ separately for distinct flight segments, the model accounts for varying dominant loss mechanisms \cite{jacewicz2022}.
+
+Efficiency values are identified from given flight data by analyzing the ratio of mechanical power to electrical power. The results reveal significant variation across flight phases:
+
+\begin{itemize}
+    \item \textbf{Hover:} $\eta = 0.83$ — Highest efficiency due to stable, symmetric induced flow and minimal parasitic drag. Power is primarily used to generate lift, with relatively low aerodynamic losses.
+    
+    \item \textbf{Cruise:} $\eta = 0.46$ — Marked reduction in efficiency caused by increased parasite drag, higher airspeed-induced losses, and non-optimal propeller inflow conditions in forward flight.
+    
+    \item \textbf{Climb:} $\eta = 0.53$ — Moderate efficiency reflecting the additional power required to overcome gravity, combined with increased induced and profile losses due to higher thrust demand.
+    
+    \item \textbf{Descent:} $\eta = 0.61$ — Efficiency improves compared to climb, as the induced power requirement decreases and the UAV may benefit from partial energy recovery (e.g., regenerative braking in some systems), though this effect is typically limited in standard quadrotors.
+\end{itemize}
+
+\subsection{Model Evaluation}
+
+The proposed physics-based propulsion model is evaluated by comparing predicted electrical power consumption against measured flight data across distinct flight segments, excluding transitional phases. Performance is quantified using three error metrics: Mean Absolute Error (MAE), Root Mean Square Error (RMSE), and Mean Absolute Percentage Error (MAPE), as summarized in Table~\ref{tab:error_by_segment}
+
+\begin{table}[tbhp]
+\centering
+\caption{Error by Segment (Excluding Transition)}
+\label{tab:error_by_segment}
+\begin{tabular}{lrrrr}
+\textbf{Segment} & \textbf{MAE (W)} & \textbf{RMSE (W)} & \textbf{MAPE (\%)} \\
+Hover      & 185.36 & 196.14 & 84.86 \\
+Climb      & 56.99  & 82.64  & 10.48 \\
+Descent    & 45.71  & 64.36  & 9.58 \\
+Cruise     & 54.79  & 73.81  & 11.01 \\
+\end{tabular}
+\end{table}
+
+The results indicate strong performance in cruise, climb, and descent phases, with MAPE values below 12\% and RMSE under $85~\text{W}$, suggesting relatively accurate modeling of aerodynamic and propulsion dynamics under steady forward and vertical motion. The higher MAPE in hover (84.86\%) is attributed to the high sensitivity of power to small variations in thrust and induced velocity, as well as the dominance of induced power and inherent inefficiencies in the rotor system. Overall, the segment-wise efficiency approach significantly improves fidelity, demonstrating the value of phase-dependent modeling in UAV performance estimation.
