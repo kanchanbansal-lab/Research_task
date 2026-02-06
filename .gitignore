@@ -1,3 +1,7 @@
 venv
 12683453.zip
 12683453
+*.pdf
+*.png
+*.svg
+*.csv
